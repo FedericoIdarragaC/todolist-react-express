@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - backend-network
+      
+  redis:
+    image: redis
+    networks:
+      - backend-network
+  server:
+    build:
+        context: ./server
+        dockerfile: Dockerfile
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '3001:3001'
+    environment:
+      - REDIS_HOST=redis://redis:6379
+      - NODE_ENV=test
+    networks:
+      - backend-network
+
+  web: 
+    build:
+      context: ./client
+      dockerfile: Dockerfile.test
+    environment:
+      - REACT_APP_SERVER_URL=http://localhost:3001/ 
+    command: npm test
+    ports:
+      - '3000:3000'
+    depends_on:
+      - server
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge

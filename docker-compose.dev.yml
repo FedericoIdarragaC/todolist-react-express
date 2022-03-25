@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5435:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  redis:
+    image: redis
+    networks:
+      - backend-network
+
+  server:
+    build:
+        context: ./server
+        dockerfile: Dockerfile.dev
+    volumes:
+        - './server:/usr/src/app'
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '4000:4000'
+    environment:
+      - REDIS_HOST=redis://redis:6379
+      - PORT=4000
+      - CHOKIDAR_USEPOLLING="true"
+    networks:
+      - backend-network
+
+  client: 
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    environment:
+      - REACT_APP_SERVER_URL=http://localhost:4000/ 
+      - CHOKIDAR_USEPOLLING="true"
+    command: npm start
+    volumes:
+      - './client:/usr/src/app'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - server
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  db:
+    driver: local

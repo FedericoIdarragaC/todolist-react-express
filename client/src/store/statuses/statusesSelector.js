@@ -1,0 +1,1 @@
+export const getStatuses = ({statuses}) => statuses.statuses;

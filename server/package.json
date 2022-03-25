@@ -1,0 +1,38 @@
+{
+  "name": "todo-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles --testTimeout=10000",
+    "db-setup": "npx sequelize db:migrate &&  sequelize-cli db:seed:all",
+    "dev": "npm run db-setup && npm uninstall bcrypt && npm install bcrypt && nodemon app.js",
+    "start": "npm run db-setup && npm uninstall bcrypt && npm install bcrypt && node app.js"
+
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "connect-redis": "^6.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "express-async-errors": "^3.1.1",
+    "express-session": "^1.17.2",
+    "jest": "^27.5.1",
+    "morgan": "^1.10.0",
+    "nbd": "^0.2.2",
+    "pg": "^8.7.3",
+    "redis": "^4.0.4",
+    "sequelize": "^6.17.0",
+    "sequelize-cli": "^6.4.1",
+    "sinon": "^13.0.1",
+    "supertest": "^6.2.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "ndb": "^1.1.5",
+    "nodemon": "^2.0.15"
+  }
+}
